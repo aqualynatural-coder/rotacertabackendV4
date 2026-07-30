@@ -21,6 +21,7 @@ RUN apk add --no-cache openssl bash
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY package.json ./
 RUN mkdir -p uploads && chown -R node:node /app
 USER node
