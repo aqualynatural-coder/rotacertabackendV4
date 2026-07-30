@@ -108,7 +108,6 @@ model Driver {
   licenseNumber String?
   vehiclePlate  String?
   vehicleModel  String?
-  // Telemetria do veículo (calculada por lógica pura)
   totalKmDriven Float    @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -129,10 +128,10 @@ model Vehicle {
   driverId           String   @unique
   plate              String
   model              String
-  fuelConsumptionKmL Float    @default(10.0)   // km por litro
-  fuelPricePerLiter  Float    @default(5.80)   // R$/L
-  maintenanceKmLimit Float    @default(10000)  // limite p/ revisão (km)
-  kmSinceMaintenance Float    @default(0)      // km desde última revisão
+  fuelConsumptionKmL Float    @default(10.0)
+  fuelPricePerLiter  Float    @default(5.80)
+  maintenanceKmLimit Float    @default(10000)
+  kmSinceMaintenance Float    @default(0)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -177,7 +176,6 @@ model Route {
   scheduledFor DateTime
   startedAt    DateTime?
   endedAt      DateTime?
-  // Métricas calculadas ao finalizar (lógica pura)
   distanceKm   Float       @default(0)
   fuelUsedLiters Float     @default(0)
   fuelCostBrl  Float       @default(0)
@@ -237,7 +235,7 @@ model DeliveryFailure {
   deliveryId String      @unique
   code       FailureCode
   notes      String?
-  photoUrl   String?     // POD obrigatório também em falha
+  photoUrl   String?
   latitude   Float?
   longitude  Float?
   createdAt  DateTime    @default(now())
@@ -257,7 +255,6 @@ model LocationPing {
   speed      Float?
   heading    Float?
   accuracy   Float?
-  // Anti-spoof GPS (detecção por lógica pura)
   suspect       Boolean @default(false)
   suspectReason String?
   recordedAt DateTime
@@ -305,28 +302,27 @@ model AuditLog {
 }
 
 // ==============================
-//  System settings (personalização)
+//  System settings
 // ==============================
 model SystemSettings {
   id            String   @id @default("settings")
   companyName   String   @default("RotaCerta")
   logoUrl       String?
-  accentColor   String   @default("#0EA5E9")  // cor de acento global
-  // Sede da empresa (ponto de partida/retorno do motorista)
+  accentColor   String   @default("#0EA5E9")
   hqAddress     String?
   hqLatitude    Float?
   hqLongitude   Float?
-  hqRadiusM     Float    @default(150)        // raio do geofence da sede (m)
+  hqRadiusM     Float    @default(150)
   updatedAt     DateTime @updatedAt
 }
 
 // ==============================
-//  Expediente (check-in / check-out na sede)
+//  Shift
 // ==============================
 model Shift {
   id           String    @id @default(cuid())
   driverId     String
-  date         DateTime  // dia (00:00) do expediente
+  date         DateTime
   checkInAt    DateTime
   checkInLat   Float?
   checkInLng   Float?
@@ -345,12 +341,12 @@ model Shift {
 }
 
 // ==============================
-//  Chat escritório <-> motorista (via Socket.IO + persistência)
+//  Chat Message
 // ==============================
 model ChatMessage {
   id         String   @id @default(cuid())
-  driverId   String   // thread = motorista
-  senderId   String   // userId de quem enviou
+  driverId   String
+  senderId   String
   senderRole Role
   body       String
   read       Boolean  @default(false)
@@ -363,7 +359,7 @@ model ChatMessage {
 }
 
 // ==============================
-//  Link público de rastreamento (cliente final, sem login)
+//  Tracking Link
 // ==============================
 model TrackingLink {
   id        String    @id @default(cuid())
@@ -379,13 +375,13 @@ model TrackingLink {
 }
 
 // ==============================
-//  Web Push (VAPID) — notificação mesmo com app fechado
+//  Web Push
 // ==============================
 model PushSubscription {
   id        String   @id @default(cuid())
   userId    String
   endpoint  String   @unique
-  keys      Json     // { p256dh, auth }
+  keys      Json
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
