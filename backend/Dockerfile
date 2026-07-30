@@ -22,8 +22,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma ./prisma
 COPY package.json ./
-RUN npx prisma db push && npx prisma generate
 RUN mkdir -p uploads && chown -R node:node /app
+USER node
 EXPOSE 4000
 
 # Entrypoint: aplica migrations, roda seed se necessário e inicia
