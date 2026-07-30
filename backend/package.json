@@ -17,6 +17,7 @@
   "dependencies": {
     "web-push": "^3.6.7",
     "otplib": "^12.0.1",
+    "date-fns": "^3.6.0",
     "qrcode": "^1.5.4",
     "pdfkit": "^0.15.2",
     "@prisma/client": "^5.22.0",
